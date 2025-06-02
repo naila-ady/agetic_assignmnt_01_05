@@ -5,20 +5,20 @@ import asyncio
 from dotenv import load_dotenv
 load_dotenv()
 
-gemini_api_key = os.getenv("GEMINI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # Check if the API key is present; if not, raise an error
-if not gemini_api_key:
+if not OPENROUTER_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set. Please ensure it is defined in your .env file.")
 
 
 external_client = AsyncOpenAI(
-    api_key=gemini_api_key,
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1",
 )
 
 model = OpenAIChatCompletionsModel(
-    model="gemini-2.0-flash",
+    model="deepseek/deepseek-chat:free",
     openai_client=external_client
 )
 
@@ -31,16 +31,13 @@ config = RunConfig(
 
 async def main():
     agent = Agent(
-        name="Assistant",
-        instructions="You are helpful Assistent.",
+        name="Chatbot",
+        instructions="You are helpful Assistant.",
         model=model
     )
 
-    result = await Runner.run(agent, "Tell me about recursion in programming.", run_config=config)
+    result = await Runner.run(agent, "Who is the president of USA?", run_config=config)
     print(result.final_output)
-    # Function calls itself,
-    # Looping in smaller pieces,
-    # Endless by design.
 
 
 if __name__ == "__main__":
